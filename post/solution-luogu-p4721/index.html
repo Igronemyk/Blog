@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/Blog/images/apple-touch-icon-next.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/Blog/images/favicon-32x32-next.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/Blog/images/favicon-16x16-next.png?v=7.4.0">
+  <link rel="mask-icon" href="/Blog/images/logo.svg?v=7.4.0" color="#222">
+
+<link rel="stylesheet" href="/Blog/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/Blog/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/Blog/',
+    scheme: 'Gemini',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"mac"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: true,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="题意简述 给定\(g[0] \cdots g[n - 1]\)，求\(f[0] \cdots f[n - 1]\)，其中 \[f[i] = \sum _ {j = 1} ^ i f[i - j]g[j]\] 边界为\(f[0] = 1\)。答案模\(998244353\)。 数据范围 \[2 \leq n \leq 10 ^ 5\] \[0 \leq g[i] &amp;lt; 998244353\">
+<meta name="keywords" content="OI,解题报告,数论,FFT,CDQ分治,Luogu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Luogu P4721 解题报告">
+<meta property="og:url" content="https://igronemyk.github.io/Blog/post/solution-luogu-p4721/index.html">
+<meta property="og:site_name" content="Igronemyk&#39;s Blog">
+<meta property="og:description" content="题意简述 给定\(g[0] \cdots g[n - 1]\)，求\(f[0] \cdots f[n - 1]\)，其中 \[f[i] = \sum _ {j = 1} ^ i f[i - j]g[j]\] 边界为\(f[0] = 1\)。答案模\(998244353\)。 数据范围 \[2 \leq n \leq 10 ^ 5\] \[0 \leq g[i] &amp;lt; 998244353\">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-09-16T06:49:45.433Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Luogu P4721 解题报告">
+<meta name="twitter:description" content="题意简述 给定\(g[0] \cdots g[n - 1]\)，求\(f[0] \cdots f[n - 1]\)，其中 \[f[i] = \sum _ {j = 1} ^ i f[i - j]g[j]\] 边界为\(f[0] = 1\)。答案模\(998244353\)。 数据范围 \[2 \leq n \leq 10 ^ 5\] \[0 \leq g[i] &amp;lt; 998244353\">
+  <link rel="canonical" href="https://igronemyk.github.io/Blog/post/solution-luogu-p4721/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Luogu P4721 解题报告 | Igronemyk's Blog</title>
+  <meta name="generator" content="Hexo 3.7.1">
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/Blog/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Igronemyk's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/Blog/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/Blog/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/Blog/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/Blog/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-about">
+      
+    
+
+    <a href="/Blog/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-友链">
+      
+    
+
+    <a href="/Blog/links" rel="section"><i class="menu-item-icon fa fa-fw fa-users"></i> <br>友链</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a class="book-mark-link book-mark-link-fixed" href="#"></a>
+
+  <a href="https://github.com/Igronemyk" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://igronemyk.github.io/Blog/Blog/post/solution-luogu-p4721/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Igronemyk">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/Blog/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Igronemyk's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">Luogu P4721 解题报告
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2018-10-19 16:18:23" itemprop="dateCreated datePublished" datetime="2018-10-19T16:18:23+08:00">2018-10-19</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-09-16 14:49:45" itemprop="dateModified" datetime="2019-09-16T14:49:45+08:00">2019-09-16</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/Blog/categories/OI/" itemprop="url" rel="index"><span itemprop="name">OI</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/Blog/categories/OI/解题报告/" itemprop="url" rel="index"><span itemprop="name">解题报告</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/Blog/categories/OI/解题报告/Luogu/" itemprop="url" rel="index"><span itemprop="name">Luogu</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="题意简述">题意简述</h1>
+<p>给定<span class="math inline">\(g[0] \cdots g[n - 1]\)</span>，求<span class="math inline">\(f[0] \cdots f[n - 1]\)</span>，其中 <span class="math display">\[f[i] = \sum _ {j = 1} ^ i f[i - j]g[j]\]</span> 边界为<span class="math inline">\(f[0] = 1\)</span>。答案模<span class="math inline">\(998244353\)</span>。</p>
+<h1 id="数据范围">数据范围</h1>
+<p><span class="math display">\[2 \leq n \leq 10 ^ 5\]</span> <span class="math display">\[0 \leq g[i] &lt; 998244353\]</span></p>
+<p>时间限制：1s 空间限制：128MB <a id="more"></a></p>
+<h1 id="题目链接">题目链接</h1>
+<p><a href="https://www.luogu.org/problemnew/show/P4721" target="_blank" rel="noopener">Luogu P4721</a></p>
+<h1 id="题解">题解</h1>
+<p>变换一下式子，可以得到 <span class="math display">\[f[i] = \sum _ {j = 0} ^ {i - 1} f[j]g[i - j]\]</span> 这是分治FFT的模板题，关于分治FFT的内容可以查看<a href="/Blog/post/study-note-cdq-fft/" title="分治FFT 学习笔记">分治FFT 学习笔记</a></p>
+<h1 id="代码">代码</h1>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cmath&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">long</span> <span class="keyword">long</span> ll;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> MODDER = <span class="number">998244353</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> G = <span class="number">3</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> MAXN = <span class="number">262150</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function">T <span class="title">read</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    T result = <span class="number">0</span>;<span class="keyword">int</span> f = <span class="number">1</span>;<span class="keyword">int</span> c = getchar();</span><br><span class="line">    <span class="keyword">while</span>(c &gt; <span class="string">'9'</span> || c &lt; <span class="string">'0'</span>) &#123;<span class="keyword">if</span>(c == <span class="string">'-'</span>) f *= <span class="number">-1</span>;c = getchar();&#125;</span><br><span class="line">    <span class="keyword">while</span>(c &lt;= <span class="string">'9'</span> &amp;&amp; c &gt;= <span class="string">'0'</span>) &#123;result = result * <span class="number">10</span> + c - <span class="string">'0'</span>;c = getchar();&#125;</span><br><span class="line">    <span class="keyword">return</span> result * f;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">ll <span class="title">quickPow</span><span class="params">(ll a,ll b)</span> </span>&#123;</span><br><span class="line">    ll result = <span class="number">1</span>,base = a;</span><br><span class="line">    <span class="keyword">while</span>(b) &#123;</span><br><span class="line">        <span class="keyword">if</span>(b &amp; <span class="number">1</span>) result = (result * base) % MODDER;</span><br><span class="line">        base = (base * base) % MODDER;</span><br><span class="line">        b &gt;&gt;= <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result % MODDER;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">ll <span class="title">inv</span><span class="params">(ll value)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> quickPow(value,MODDER - <span class="number">2</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> NTT &#123;</span><br><span class="line">    <span class="keyword">int</span> bitValue[MAXN];</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">(<span class="keyword">int</span> size)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> bitCount = <span class="number">0</span>;</span><br><span class="line">        bitValue[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>((<span class="number">1</span> &lt;&lt; bitCount) &lt; size) bitCount++;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>;i &lt; size;i++) &#123;</span><br><span class="line">            bitValue[i] = (bitValue[i &gt;&gt; <span class="number">1</span>] &gt;&gt; <span class="number">1</span>) | ((i &amp; <span class="number">1</span>) &lt;&lt; (bitCount - <span class="number">1</span>));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">bitReverse</span><span class="params">(ll *a,<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; n;i++) &#123;</span><br><span class="line">            <span class="keyword">if</span>(bitValue[i] &lt; i) &#123;</span><br><span class="line">                swap(a[i],a[bitValue[i]]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">transform</span><span class="params">(ll *a,<span class="keyword">int</span> n,<span class="keyword">bool</span> isReverse)</span> </span>&#123;</span><br><span class="line">        bitReverse(a,n);</span><br><span class="line">        ll baseW = quickPow(G,(MODDER - <span class="number">1</span>) / n);</span><br><span class="line">        <span class="keyword">if</span>(isReverse) &#123;</span><br><span class="line">            baseW = inv(baseW);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> length = <span class="number">2</span>;length &lt;= n;length &lt;&lt;= <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">int</span> mid = length / <span class="number">2</span>;</span><br><span class="line">            ll wn = quickPow(baseW,n / length);</span><br><span class="line">            <span class="keyword">for</span>(ll *pos = a;pos != a + n;pos += length) &#123;</span><br><span class="line">                ll w = <span class="number">1</span>;</span><br><span class="line">                <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; mid;i++) &#123;</span><br><span class="line">                    ll x = pos[i],y = pos[mid + i] * w % MODDER;</span><br><span class="line">                    pos[i] = (x + y) % MODDER;</span><br><span class="line">                    pos[mid + i] = (x - y + MODDER) % MODDER;</span><br><span class="line">                    w = (w * wn) % MODDER;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dft</span><span class="params">(ll *a,<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">        transform(a,n,<span class="literal">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">idft</span><span class="params">(ll *a,<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">        transform(a,n,<span class="literal">true</span>);</span><br><span class="line">        ll x = inv(n);</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; n;i++) &#123;</span><br><span class="line">            a[i] = (a[i] * x) % MODDER;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">multiply</span><span class="params">(ll *a,ll *b,<span class="keyword">int</span> length)</span> </span>&#123;</span><br><span class="line">        dft(a,length);</span><br><span class="line">        dft(b,length);</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; length;i++) &#123;</span><br><span class="line">            a[i] = (a[i] * b[i]) % MODDER;</span><br><span class="line">        &#125;</span><br><span class="line">        idft(a,length);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> NTT;</span><br><span class="line"></span><br><span class="line">ll f[MAXN],g[MAXN],A[MAXN],B[MAXN];</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> n,m;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">cdq</span><span class="params">(<span class="keyword">int</span> l,<span class="keyword">int</span> r)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(l == r) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> mid = (l + r) &gt;&gt; <span class="number">1</span>,length = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span>(length &lt; (r - l)) length &lt;&lt;= <span class="number">1</span>;</span><br><span class="line">    cdq(l,mid);</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; length;i++) &#123;</span><br><span class="line">        A[i] = <span class="number">0</span>;</span><br><span class="line">        B[i] = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt;= mid - l;i++) A[i] = f[i + l];</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt;= r - l - <span class="number">1</span>;i++) B[i] = g[i + <span class="number">1</span>];</span><br><span class="line">    init(length);</span><br><span class="line">    dft(A,length);</span><br><span class="line">    dft(B,length);</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; length;i++) A[i] = (A[i] * B[i]) % MODDER;</span><br><span class="line">    idft(A,length);</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = mid + <span class="number">1</span>;i &lt;= r;i++) f[i] = (f[i] + A[i - l - <span class="number">1</span>]) % MODDER;</span><br><span class="line">    cdq(mid + <span class="number">1</span>,r);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    n = read&lt;<span class="keyword">int</span>&gt;();</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>;i &lt;= n - <span class="number">1</span>;i++) &#123;</span><br><span class="line">        g[i] = read&lt;ll&gt;();</span><br><span class="line">    &#125;</span><br><span class="line">    f[<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">    cdq(<span class="number">0</span>,n - <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; n;i++) <span class="built_in">printf</span>(<span class="string">"%lld "</span>,f[i]);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Igronemyk</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://igronemyk.github.io/Blog/post/solution-luogu-p4721/" title="Luogu P4721 解题报告">https://igronemyk.github.io/Blog/post/solution-luogu-p4721/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/Blog/tags/OI/" rel="tag"><i class="fa fa-tag"></i> OI</a>
+            
+              <a href="/Blog/tags/解题报告/" rel="tag"><i class="fa fa-tag"></i> 解题报告</a>
+            
+              <a href="/Blog/tags/数论/" rel="tag"><i class="fa fa-tag"></i> 数论</a>
+            
+              <a href="/Blog/tags/FFT/" rel="tag"><i class="fa fa-tag"></i> FFT</a>
+            
+              <a href="/Blog/tags/CDQ分治/" rel="tag"><i class="fa fa-tag"></i> CDQ分治</a>
+            
+              <a href="/Blog/tags/Luogu/" rel="tag"><i class="fa fa-tag"></i> Luogu</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/Blog/post/solution-bzoj-3436/" rel="next" title="BZOJ 3436 解题报告">
+                  <i class="fa fa-chevron-left"></i> BZOJ 3436 解题报告
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/Blog/post/study-note-cdq-fft/" rel="prev" title="分治FFT 学习笔记">
+                  分治FFT 学习笔记 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    
+  <div class="comments" id="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC8zNTU1Ny8xMjA5Mw"></div>
+  </div>
+  
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#题意简述"><span class="nav-number">1.</span> <span class="nav-text">题意简述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据范围"><span class="nav-number">2.</span> <span class="nav-text">数据范围</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#题目链接"><span class="nav-number">3.</span> <span class="nav-text">题目链接</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#题解"><span class="nav-number">4.</span> <span class="nav-text">题解</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码"><span class="nav-number">5.</span> <span class="nav-text">代码</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Igronemyk</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/Blog/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/Blog/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/Blog/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/igronemyk" title="GitHub &rarr; https://github.com/igronemyk" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/Blog/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Igronemyk</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.7.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/Blog/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/Blog/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/Blog/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/Blog/js/utils.js?v=7.4.0"></script><script src="/Blog/js/motion.js?v=7.4.0"></script>
+<script src="/Blog/js/schemes/pisces.js?v=7.4.0"></script>
+
+<script src="/Blog/js/next-boot.js?v=7.4.0"></script><script src="/Blog/js/bookmark.js?v=7.4.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="/Blog/js/local-search.js?v=7.4.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+    
+      
+<script type="text/x-mathjax-config">
+    MathJax.Ajax.config.path['mhchem'] = '//cdn.jsdelivr.net/npm/mathjax-mhchem@3';
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        extensions: ['[mhchem]/mhchem.js'],
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
+  
+
+  
+
+  
+
+<script>
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+</body>
+</html>

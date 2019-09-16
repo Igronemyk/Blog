@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/Blog/images/apple-touch-icon-next.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/Blog/images/favicon-32x32-next.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/Blog/images/favicon-16x16-next.png?v=7.4.0">
+  <link rel="mask-icon" href="/Blog/images/logo.svg?v=7.4.0" color="#222">
+
+<link rel="stylesheet" href="/Blog/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/Blog/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/Blog/',
+    scheme: 'Gemini',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"mac"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: true,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="使用Jekyll和Coding.net的Pages服务来搭建一个个人博客。">
+<meta name="keywords" content="搭建博客,Jekyll,Pages服务,Coding.net">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何使用Jekyll搭建一个个人博客">
+<meta property="og:url" content="https://igronemyk.github.io/Blog/post/how-to-build-a-blog-by-jekyll/index.html">
+<meta property="og:site_name" content="Igronemyk&#39;s Blog">
+<meta property="og:description" content="使用Jekyll和Coding.net的Pages服务来搭建一个个人博客。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-09-16T06:49:45.426Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="如何使用Jekyll搭建一个个人博客">
+<meta name="twitter:description" content="使用Jekyll和Coding.net的Pages服务来搭建一个个人博客。">
+  <link rel="canonical" href="https://igronemyk.github.io/Blog/post/how-to-build-a-blog-by-jekyll/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>如何使用Jekyll搭建一个个人博客 | Igronemyk's Blog</title>
+  <meta name="generator" content="Hexo 3.7.1">
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/Blog/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Igronemyk's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/Blog/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/Blog/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/Blog/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/Blog/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-about">
+      
+    
+
+    <a href="/Blog/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-友链">
+      
+    
+
+    <a href="/Blog/links" rel="section"><i class="menu-item-icon fa fa-fw fa-users"></i> <br>友链</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a class="book-mark-link book-mark-link-fixed" href="#"></a>
+
+  <a href="https://github.com/Igronemyk" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://igronemyk.github.io/Blog/Blog/post/how-to-build-a-blog-by-jekyll/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Igronemyk">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/Blog/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Igronemyk's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">如何使用Jekyll搭建一个个人博客
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2017-04-01 21:00:00" itemprop="dateCreated datePublished" datetime="2017-04-01T21:00:00+08:00">2017-04-01</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-09-16 14:49:45" itemprop="dateModified" datetime="2019-09-16T14:49:45+08:00">2019-09-16</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/Blog/categories/其他/" itemprop="url" rel="index"><span itemprop="name">其他</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/Blog/categories/其他/搭建博客/" itemprop="url" rel="index"><span itemprop="name">搭建博客</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            <div class="post-description">使用Jekyll和Coding.net的Pages服务来搭建一个个人博客。</div>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="注册coding.net账号">注册Coding.net账号</h1>
+<p>访问<a href="https://coding.net/" target="_blank" rel="noopener">Coding.net官网</a>，并注册一个账号，然后新建一个项目。如果想要仅用二级域名访问（即<code>username.coding.me</code>），项目名称应为<code>username.coding.me</code>，否则博客的访问地址为<code>username.coding.me/项目名称</code>，且在这种情况下，有一种特殊的现象需要处理，本文第九部分会有说明。（注：<code>username</code>为账号名称）</p>
+<h1 id="安装jekyll如果不需要本地调试可以跳过此步骤">安装Jekyll（如果不需要本地调试可以跳过此步骤）</h1>
+<p>在安装Jekyll之前，你需要安装Ruby。本文介绍在Windows环境下如何安装Jekyll。首先下载<a href="https://rubyinstaller.org/" target="_blank" rel="noopener">RubyInstaller</a>，在RubyInstaller安装完成后使用gem来安装Jekyll，输入命令：<code>gem install Jekyll</code>然后等待一段时间安装就完成了。（由于gem下载源在国外，这一段时间会变得非常长，所以在安装Jekyll前可以<a href="https://gems.ruby-china.org/" target="_blank" rel="noopener">更换gem源</a>）。</p>
+<h1 id="建立目录结构">建立目录结构</h1>
+<p>Jekyll是一个静态网页生成器，只要按照规范建立目录Jekyll就可以帮你生成静态网页。建立目录结构有两种方案： 1. 使用<code>jekyll new [blogname]</code>命令来自动的生成一个目录结构。在该命令执行目录下会出现一个名称为<code>blogname</code>的文件夹，文件夹内部就是建立好的目录结构，该文件夹内部就是博客的根目录。使用该命令需要<code>bundler</code>依赖，所以可以先执行<code>gem install bundler</code>，否则命令执行会报错。 2. 手动建立目录结构，关于Jekyll目录结构的详细信息请查看<a href="http://jekyllcn.com/docs/structure/" target="_blank" rel="noopener">Jekyll官方文档</a>，本文只做简单介绍。新建一个文件夹作为博客根目录，然后在该文件夹内创建以下文件或文件夹：</p>
+<ul>
+<li><code>_config.yml</code>: 配置文件，进行依赖设置和站点全局信息设置。</li>
+<li><code>_posts</code>: 存放发布到博客上的文章。</li>
+<li><code>_layouts</code>: 存放布局文件。</li>
+</ul>
+<h1 id="创建博客布局">创建博客布局</h1>
+<p>如果使用方案一建立目录结构，目录中本身就含有布局，如果使用默认布局可以选择跳过此步骤。博客布局应在<code>_layouts</code>文件夹创建。布局可以自行创建或者直接使用他人的布局（将<code>_layouts</code>文件夹以及该文件夹中文件所引用的所有资源都拷贝到博客根目录下），本文介绍一种最简单的布局：</p>
+<p>在<code>_layouts</code>文件夹下创建<code>default.html</code>，并输入以下内容： <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span>    </span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        &#123;&#123; content &#125;&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>一个最简单的布局就建立好了。其中值得注意的是<code>{{ content }}</code>，这是Jekyll提供的一种功能，这段语句告诉Jekyll将编译好的博客内容插入到这来形成文章。关于这种用法的相信信息也可以到<a href="http://jekyllcn.com/docs/home/" target="_blank" rel="noopener">Jekyll官方文档</a>查看。布局文件可以创建多个，名称不限内容不限，而且可以互相引用，Jekyll不会对除使用特殊语句的其他部分进行任何更改。</p>
+<h1 id="建立博客索引">建立博客索引</h1>
+<p>在博客根目录下创建<code>index.html</code>，用以显示所有的文章，提供访问索引。使用<code>index.*</code>这种文件名可以在访问时省略文件名，即根目录下的<code>xxx.html</code>需要通过<code>url/xxx.html</code>访问，而根目录下的<code>index.*</code>直接输入<code>url</code>就可以访问了，该规则适用于任何目录。然后让<code>index.html</code>使用default布局，在<code>index.html</code>顶端输入以下内容： <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">layout: default</span><br><span class="line">---</span><br></pre></td></tr></table></figure></p>
+<p>就表示使用default布局了，<code>index.html</code>中的内容将替换掉<code>default.html</code>中的<code>{{ content }}</code>并生成最终的<code>index.html</code>。两条<code>---</code>之间的部分被称之为YAML头信息，可以指定一些变量的值，还可以自定义变量。然后继续输入以下内容： <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;% for post in site.posts % &#125;</span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">" &#123;&#123; post.url &#125;&#125;"</span>&gt;</span>&#123;&#123; post.title &#125;&#125;<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">&#123;% endfor %&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这段代码会列出所有<code>_posts</code>文件夹下的文章，索引就生成完毕了。</p>
+<h1 id="撰写文章">撰写文章</h1>
+<p>文章的撰写在<code>_posts</code>文件夹下完成，可以使用Markdown语法。需要注意的是头信息和文件名称。Jekyll对于文件名称的要求是<code>YYYY-MM-DD-name.md</code>，例如：<code>2017-04-01-Hello-World.md</code>，而<code>2017-4-1-Hello-World.md</code>就不能被正确的识别。</p>
+<h1 id="本地调试">本地调试</h1>
+<p>在博客根目录下，执行<code>jekyll serve</code>命令，然后访问<code>localhost:4000</code>，你就可以在本地预览博客的构建效果了。与此同时，更改文章或布局的内容都会即时的反映在预览中。</p>
+<h1 id="提交至coding.net">提交至Coding.net</h1>
+<p>在博客根目录下建立Git仓库，然后将内容提交到Coding.net上你创建的项目中。找到Pages服务页面，然后选择master分支并确定。在一段时间之后，你的博客就正式的构建好了，访问地址在第一部分中有说明。每次发布新文章都需要重复第六部分到第八部分。</p>
+<h1 id="关于非username.coding.me名称项目的特殊说明">关于非<code>username.coding.me</code>名称项目的特殊说明</h1>
+<p>如果读者在非<code>username.coding.me</code>项目中创建了自己的博客，会发现一种十分奇怪的现象：只有博客的主页可以访问，任何的跳转链接都会转到无效页面。这是因为超链接在跳转过程中是以<code>username.coding.me</code>为前缀的，没有后面的<code>/项目名称</code>部分。对于这种现象的解决方案为：</p>
+<p>一、在<code>_config.yml</code>内新建一行，输入：<code>baseurl： /项目名称</code></p>
+<p>二、将所有的超链接都替换为：<code>{{ "原超链接" | prepend: site.baseurl }}</code></p>
+<p>然后提交更改，等待重新构建就可以成功的访问了。</p>
+<p>题外话：</p>
+<ol type="1">
+<li>其实GitHub也是提供了Pages服务的，而且也支持Jekyll，但是由于国内一些特殊的原因，GitHub有时候会出现无法访问的现象，所以我将博客搭在了Coding.net上。使用Pages服务搭建博客好处在于静态网页访问速度快，而且不需要花钱租VPS，如果有能力租用VPS的话建立一个属于自己的可以互动的博客是个更好的选择。</li>
+<li>JekyllWriter也是一个不错的博客编写工具，不过可能由于我的操作问题，JekyllWriter发布的文章无法删除，而且布局并不是很自由，所以最后我放弃使用它了。有兴趣的读者可以尝试一下。</li>
+<li>这是我第一次写博客，如果有什么建议可以发在评论里。</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Igronemyk</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://igronemyk.github.io/Blog/post/how-to-build-a-blog-by-jekyll/" title="如何使用Jekyll搭建一个个人博客">https://igronemyk.github.io/Blog/post/how-to-build-a-blog-by-jekyll/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/Blog/tags/搭建博客/" rel="tag"><i class="fa fa-tag"></i> 搭建博客</a>
+            
+              <a href="/Blog/tags/Jekyll/" rel="tag"><i class="fa fa-tag"></i> Jekyll</a>
+            
+              <a href="/Blog/tags/Pages服务/" rel="tag"><i class="fa fa-tag"></i> Pages服务</a>
+            
+              <a href="/Blog/tags/Coding-net/" rel="tag"><i class="fa fa-tag"></i> Coding.net</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/Blog/post/solution-codeforces-454A/" rel="prev" title="Codeforces 454A 解题报告">
+                  Codeforces 454A 解题报告 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    
+  <div class="comments" id="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC8zNTU1Ny8xMjA5Mw"></div>
+  </div>
+  
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#注册coding.net账号"><span class="nav-number">1.</span> <span class="nav-text">注册Coding.net账号</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#安装jekyll如果不需要本地调试可以跳过此步骤"><span class="nav-number">2.</span> <span class="nav-text">安装Jekyll（如果不需要本地调试可以跳过此步骤）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#建立目录结构"><span class="nav-number">3.</span> <span class="nav-text">建立目录结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建博客布局"><span class="nav-number">4.</span> <span class="nav-text">创建博客布局</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#建立博客索引"><span class="nav-number">5.</span> <span class="nav-text">建立博客索引</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#撰写文章"><span class="nav-number">6.</span> <span class="nav-text">撰写文章</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#本地调试"><span class="nav-number">7.</span> <span class="nav-text">本地调试</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#提交至coding.net"><span class="nav-number">8.</span> <span class="nav-text">提交至Coding.net</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#关于非username.coding.me名称项目的特殊说明"><span class="nav-number">9.</span> <span class="nav-text">关于非username.coding.me名称项目的特殊说明</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Igronemyk</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/Blog/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/Blog/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/Blog/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/igronemyk" title="GitHub &rarr; https://github.com/igronemyk" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/Blog/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Igronemyk</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.7.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/Blog/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/Blog/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/Blog/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/Blog/js/utils.js?v=7.4.0"></script><script src="/Blog/js/motion.js?v=7.4.0"></script>
+<script src="/Blog/js/schemes/pisces.js?v=7.4.0"></script>
+
+<script src="/Blog/js/next-boot.js?v=7.4.0"></script><script src="/Blog/js/bookmark.js?v=7.4.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="/Blog/js/local-search.js?v=7.4.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+    
+      
+<script type="text/x-mathjax-config">
+    MathJax.Ajax.config.path['mhchem'] = '//cdn.jsdelivr.net/npm/mathjax-mhchem@3';
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        extensions: ['[mhchem]/mhchem.js'],
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
+  
+
+  
+
+  
+
+<script>
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+</body>
+</html>

@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title><![CDATA[HDU 5730 解题报告]]></title>
+    <url>%2FBlog%2Fpost%2Fsolution-hdu-5730%2F</url>
+    <content type="text"><![CDATA[题意简述 你希望组合出一条长度为\(n\)的项链，给定\(a[1] \cdots a[n]\)，\(a[i]\)表示长度为\(i\)的项链的种类有\(a[i]\)种，问一共能组合出多少种长度为\(n\)的项链。答案对\(313\)取模。 多组数据，数据不超过20组。 数据范围 \[1 \leq n \leq 10 ^ 5\] \[1 \leq a[i] \leq 10 ^ 7\] 题目链接 HDU 5730 题解 根据题意列出如下式子： \[f[n] = \sum _ {i = 0} ^ {n - 1} f[i]a[n - i]\] \(f[n]\)是要求的答案。 这是分治FFT的模板题，关于分治FFT的内容可以查看分治FFT 学习笔记 需要注意的是\(f和g\)不能用复数存储，且在\([l,mid]\)到\([mid + 1,r]\)的贡献计算中要取模来保证精度不出错。 代码 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107108109110111112113114115116117118119120121122123124125126127128129130131#include &lt;cstdio&gt;#include &lt;algorithm&gt;#include &lt;cstring&gt;#include &lt;cmath&gt;using namespace std;typedef double d;const double PI = acos(-1);const int MAXN = 131080;const int MODDER = 313;template&lt;typename T&gt;T read() &#123; T result = 0;int f = 1;int c = getchar(); while(c &gt; '9' || c &lt; '0') &#123;if(c == '-') f *= -1;c = getchar();&#125; while(c &lt;= '9' &amp;&amp; c &gt;= '0') &#123;result = result * 10 + c - '0';c = getchar();&#125; return result * f;&#125;struct C &#123; d r,i; C() : r(0) , i(0) &#123; &#125; C(d r,d i) : r(r) , i(i) &#123; &#125; C operator + (const C &amp;oC) const &#123; return C(r + oC.r,i + oC.i); &#125; C operator - (const C &amp;oC) const &#123; return C(r - oC.r,i - oC.i); &#125; C operator * (const C &amp;oC) const &#123; return C(r * oC.r - i * oC.i,r * oC.i + i * oC.r); &#125;&#125;;namespace FFT &#123; int bitValues[MAXN]; void init(int n) &#123; int bitCount = 0; while((1 &lt;&lt; bitCount) &lt; n) bitCount++; bitValues[0] = 0; for(int i = 1;i &lt; n;i++) &#123; bitValues[i] = (bitValues[i &gt;&gt; 1] &gt;&gt; 1) | ((i &amp; 1) &lt;&lt; (bitCount - 1)); &#125; &#125; void transform(C *a,int n,int iR) &#123; for(int i = 0;i &lt; n;i++) &#123; if(bitValues[i] &gt; i) &#123; swap(a[i],a[bitValues[i]]); &#125; &#125; for(int l = 2;l &lt;= n;l &lt;&lt;= 1) &#123; int mid = l &gt;&gt; 1; C wn = C(cos(2 * PI / l),iR * sin(2 * PI / l)); for(C *pos = a;pos != a + n;pos += l) &#123; C w = C(1,0); for(int i = 0;i &lt; mid;i++) &#123; C x = pos[i],y = pos[mid + i] * w; pos[i] = x + y; pos[mid + i] = x - y; w = w * wn; &#125; &#125; &#125; &#125; void dft(C *a,int n) &#123; transform(a,n,1); &#125; void idft(C *a,int n) &#123; transform(a,n,-1); for(int i = 0;i &lt; n;i++) &#123; a[i].r /= n; &#125; &#125;&#125;using namespace FFT;C A[MAXN],B[MAXN];int f[MAXN],g[MAXN];void cdq(int l,int r) &#123; if(l == r) &#123; return; &#125; int mid = (l + r) &gt;&gt; 1,len = 1; while(len &lt; (r - l)) len &lt;&lt;= 1; cdq(l,mid); for(int i = 0;i &lt; len;i++) &#123; A[i] = C(); B[i] = C(); &#125; for(int i = 0;i &lt;= mid - l;i++) A[i] = C(f[i + l],0); for(int i = 0;i &lt;= r - l - 1;i++) B[i] = C(g[i + 1],0); init(len); dft(A,len); dft(B,len); for(int i = 0;i &lt; len;i++) A[i] = A[i] * B[i]; idft(A,len); for(int i = mid + 1;i &lt;= r;i++) f[i] = (f[i] + static_cast&lt;int&gt;(round(A[i - l - 1].r))) % MODDER; cdq(mid + 1,r);&#125;int main() &#123; int n; while(~scanf("%d",&amp;n)) &#123; if(n == 0) return 0; for(int i = 0;i &lt;= n;i++) &#123; f[i] = 0; g[i] = 0; &#125; f[0] = 1; for(int i = 1;i &lt;= n;i++) &#123; g[i] = read&lt;int&gt;() % MODDER; &#125; cdq(0,n); printf("%d\n",f[n] % MODDER); &#125; return 0;&#125;]]></content>
+      <categories>
+        <category>OI</category>
+        <category>解题报告</category>
+        <category>HDU</category>
+      </categories>
+      <tags>
+        <tag>OI</tag>
+        <tag>解题报告</tag>
+        <tag>HDU</tag>
+        <tag>数论</tag>
+        <tag>FFT</tag>
+        <tag>CDQ分治</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[分治FFT 学习笔记]]></title>
+    <url>%2FBlog%2Fpost%2Fstudy-note-cdq-fft%2F</url>
+    <content type="text"><![CDATA[分治FFT 分治FFT用于快速计算以下类型的式子： \[f[n] = \sum _ {i = 0} ^ {n - 1} f[i]g[n - i]\] 这个式子与正常的\(FFT\)卷积式不同，可以发现\(f\)的每一项计算都需要前面所有项的信息，所以无法在一次\(FFT\)内将\(f[1]到f[n]\)的值计算完成。如果使用FFT暴力计算的话，时间复杂度为\(O(n ^ 2logn)\)，这通常是不能被接受的复杂度。 所以我们采用CDQ分治的思想，对于\(f[l] \cdots f[r]\)的值，我们先计算\(f[l] \cdots f[mid]\)的值，然后计算\(f[l] \cdots f[mid]\)的部分对\(f[mid + 1] \cdots f[r]\)的贡献，最后计算\(f[mid + 1] \cdots f[r]\)的值。 对于边界条件我们不需要去考虑，因为一个位置的值不会对自己产生贡献。 那么需要解决的就是如何计算\(f[l] \cdots f[mid]\)对\(f[mid + 1] \cdots f[r]\)的贡献。 首先考虑在\([mid + 1,r]\)范围内的某一个数\(x\)，\([l,mid]\)区间对其的贡献为： \[w[x] = \sum _ {i = l} ^ {mid} f[i]g[x - i]\] 为了方便推导，我们把求和的范围扩大到\([l,x - 1]\)（此时设\(f[mid + 1] \cdots f[r]\)为\(0\)），即： \[w[x] = \sum _ {i = l} ^ {x - 1} f[i]g[x - i]\] 然后我们设\(a[i] = f[i + l],b[i] = g[i + 1]\)，此时式子变化为： \[w[x] = \sum _ {i = 0} ^ {x - l - 1} a[i]b[x - l - 1 - i]\] 发现等号右侧就是一个基本的FFT卷积，设卷积得到的数组为\(z\)，可得： \[w[x] = z[x - l - 1]\] 然后我们把\(w[mid + 1] \cdots w[r]\)叠加到\(f[mid + 1] \cdots f[r]\)上就可以了 对于\([l,r]\)区间的FFT，我们需要计算的数组长度为\(r - l - 1\)，即单次分治中的复杂度为\(O(nlogn)\)，总复杂度\(T(n) = T(n / 2) + O(nlogn) = O(nlog ^ 2n)\) 例题 Luogu P4721 解题报告 HDU 5730 解题报告 参考资料 HDU 5730 Shell Necklace（CDQ分治+FFT） [分治fft] hdu5730 2016多校第一场1008 Shell Necklace]]></content>
+      <categories>
+        <category>OI</category>
+        <category>学习笔记</category>
+        <category>数论</category>
+        <category>FFT</category>
+      </categories>
+      <tags>
+        <tag>OI</tag>
+        <tag>学习笔记</tag>
+        <tag>数论</tag>
+        <tag>FFT</tag>
+        <tag>CDQ分治</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Luogu P4721 解题报告]]></title>
+    <url>%2FBlog%2Fpost%2Fsolution-luogu-p4721%2F</url>
+    <content type="text"><![CDATA[题意简述 给定\(g[0] \cdots g[n - 1]\)，求\(f[0] \cdots f[n - 1]\)，其中 \[f[i] = \sum _ {j = 1} ^ i f[i - j]g[j]\] 边界为\(f[0] = 1\)。答案模\(998244353\)。 数据范围 \[2 \leq n \leq 10 ^ 5\] \[0 \leq g[i] &lt; 998244353\] 时间限制：1s 空间限制：128MB 题目链接 Luogu P4721 题解 变换一下式子，可以得到 \[f[i] = \sum _ {j = 0} ^ {i - 1} f[j]g[i - j]\] 这是分治FFT的模板题，关于分治FFT的内容可以查看分治FFT 学习笔记 代码 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107108109110111112113114115116117118119120121122123124125126127128129130131132133134135136137#include &lt;cstdio&gt;#include &lt;algorithm&gt;#include &lt;cstring&gt;#include &lt;cmath&gt;using namespace std;typedef long long ll;const int MODDER = 998244353;const int G = 3;const int MAXN = 262150;template&lt;typename T&gt;T read() &#123; T result = 0;int f = 1;int c = getchar(); while(c &gt; '9' || c &lt; '0') &#123;if(c == '-') f *= -1;c = getchar();&#125; while(c &lt;= '9' &amp;&amp; c &gt;= '0') &#123;result = result * 10 + c - '0';c = getchar();&#125; return result * f;&#125;ll quickPow(ll a,ll b) &#123; ll result = 1,base = a; while(b) &#123; if(b &amp; 1) result = (result * base) % MODDER; base = (base * base) % MODDER; b &gt;&gt;= 1; &#125; return result % MODDER;&#125;ll inv(ll value) &#123; return quickPow(value,MODDER - 2);&#125;namespace NTT &#123; int bitValue[MAXN]; void init(int size) &#123; int bitCount = 0; bitValue[0] = 0; while((1 &lt;&lt; bitCount) &lt; size) bitCount++; for(int i = 1;i &lt; size;i++) &#123; bitValue[i] = (bitValue[i &gt;&gt; 1] &gt;&gt; 1) | ((i &amp; 1) &lt;&lt; (bitCount - 1)); &#125; &#125; void bitReverse(ll *a,int n) &#123; for(int i = 0;i &lt; n;i++) &#123; if(bitValue[i] &lt; i) &#123; swap(a[i],a[bitValue[i]]); &#125; &#125; &#125; void transform(ll *a,int n,bool isReverse) &#123; bitReverse(a,n); ll baseW = quickPow(G,(MODDER - 1) / n); if(isReverse) &#123; baseW = inv(baseW); &#125; for(int length = 2;length &lt;= n;length &lt;&lt;= 1) &#123; int mid = length / 2; ll wn = quickPow(baseW,n / length); for(ll *pos = a;pos != a + n;pos += length) &#123; ll w = 1; for(int i = 0;i &lt; mid;i++) &#123; ll x = pos[i],y = pos[mid + i] * w % MODDER; pos[i] = (x + y) % MODDER; pos[mid + i] = (x - y + MODDER) % MODDER; w = (w * wn) % MODDER; &#125; &#125; &#125; &#125; void dft(ll *a,int n) &#123; transform(a,n,false); &#125; void idft(ll *a,int n) &#123; transform(a,n,true); ll x = inv(n); for(int i = 0;i &lt; n;i++) &#123; a[i] = (a[i] * x) % MODDER; &#125; &#125; void multiply(ll *a,ll *b,int length) &#123; dft(a,length); dft(b,length); for(int i = 0;i &lt; length;i++) &#123; a[i] = (a[i] * b[i]) % MODDER; &#125; idft(a,length); &#125;&#125;using namespace NTT;ll f[MAXN],g[MAXN],A[MAXN],B[MAXN];int n,m;void cdq(int l,int r) &#123; if(l == r) &#123; return; &#125; int mid = (l + r) &gt;&gt; 1,length = 1; while(length &lt; (r - l)) length &lt;&lt;= 1; cdq(l,mid); for(int i = 0;i &lt; length;i++) &#123; A[i] = 0; B[i] = 0; &#125; for(int i = 0;i &lt;= mid - l;i++) A[i] = f[i + l]; for(int i = 0;i &lt;= r - l - 1;i++) B[i] = g[i + 1]; init(length); dft(A,length); dft(B,length); for(int i = 0;i &lt; length;i++) A[i] = (A[i] * B[i]) % MODDER; idft(A,length); for(int i = mid + 1;i &lt;= r;i++) f[i] = (f[i] + A[i - l - 1]) % MODDER; cdq(mid + 1,r);&#125;int main() &#123; n = read&lt;int&gt;(); for(int i = 1;i &lt;= n - 1;i++) &#123; g[i] = read&lt;ll&gt;(); &#125; f[0] = 1; cdq(0,n - 1); for(int i = 0;i &lt; n;i++) printf("%lld ",f[i]); return 0;&#125;]]></content>
+      <categories>
+        <category>OI</category>
+        <category>解题报告</category>
+        <category>Luogu</category>
+      </categories>
+      <tags>
+        <tag>OI</tag>
+        <tag>解题报告</tag>
+        <tag>数论</tag>
+        <tag>FFT</tag>
+        <tag>CDQ分治</tag>
+        <tag>Luogu</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[BZOJ 3436 解题报告]]></title>
+    <url>%2FBlog%2Fpost%2Fsolution-bzoj-3436%2F</url>
+    <content type="text"><![CDATA[题意描述 给定\(n\)个变量和\(m\)个式子，形如： \[a \geq b + c\] \[a \leq b + c\] \[a = b\] 这些变量必须为非负整数，如果能找到一组可行解，输出"Yes"，否则输出"No"。 时间限制（总）：10s 空间限制：128MB 题目链接 BZOJ 3436 题解 差分约束系统的典型题，转化给定的约束条件： \[a \geq b + c \Leftrightarrow a + (-c) \geq b\] \[a \leq b + c \Leftrightarrow b + c \geq a\] \[a = b \Leftrightarrow a + 0 \geq b 且 b + 0 \geq a\] 对于以上三种约束条件，建图方式为： 从点\(a\)向点\(b\)连一条权值为\(-c\)的边。 从点\(b\)向点\(a\)连一条权值为\(c\)的边。 从点\(a\)向点\(b\)连一条权值为\(0\)的边，从点\(b\)向点\(a\)连一条权值为\(0\)的边。 然后跑最短路，因为题目只是要求检查是否有可行解，所以使用dfs-SPFA判负环。注意这里要遍历每一个联通块。（或者新建一个虚点向所有节点连边，然后以虚点为起点跑一次最短路） 代码 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879808182#include &lt;cstdio&gt;#include &lt;algorithm&gt;#include &lt;cstring&gt;using namespace std;const int MAXN = 10010;const int MAXM = 20010;template&lt;typename T&gt;T read() &#123; T result = 0;int f = 1;char c = getchar(); while(c &gt; '9' || c &lt; '0') &#123;if(c == '-') f *= -1;c = getchar();&#125; while(c &lt;= '9' &amp;&amp; c &gt;= '0') &#123;result = result * 10 + c - '0';c = getchar();&#125; return result * f;&#125;struct Graph &#123; struct Edge &#123; int next,to,weight; &#125;; Edge edges[MAXM]; int tot,heads[MAXN]; Graph() : tot(0) &#123; memset(heads,-1,sizeof(heads)); &#125; void addEdge(int u,int v,int w) &#123; edges[tot].next = heads[u]; edges[tot].to = v; edges[tot].weight = w; heads[u] = tot++; &#125;&#125; graph;int dis[MAXN];bool visit[MAXN],found;void spfa(int now) &#123; visit[now] = true; for(int i = graph.heads[now];i != -1;i = graph.edges[i].next) &#123; Graph::Edge &amp;tmpEdge = graph.edges[i]; if(dis[tmpEdge.to] &lt;= dis[now] + tmpEdge.weight) continue; if(visit[tmpEdge.to]) &#123; found = true; return; &#125; dis[tmpEdge.to] = dis[now] + tmpEdge.weight; spfa(tmpEdge.to); if(found) return; &#125; visit[now] = false;&#125;int main() &#123; int n = read&lt;int&gt;(),m = read&lt;int&gt;(); for(int i = 0;i &lt; m;i++) &#123; int type = read&lt;int&gt;(),a = read&lt;int&gt;(),b = read&lt;int&gt;(); if(type == 1) &#123; int c = read&lt;int&gt;(); graph.addEdge(a,b,-c); &#125;else if(type == 2) &#123; int c = read&lt;int&gt;(); graph.addEdge(b,a,c); &#125;else &#123; graph.addEdge(a,b,0); graph.addEdge(b,a,0); &#125; &#125; for(int i = 1;i &lt;= n;i++) &#123; spfa(i); if(found) break; &#125; if(found) &#123; printf("No\n"); &#125;else &#123; printf("Yes\n"); &#125; return 0;&#125;]]></content>
+      <categories>
+        <category>OI</category>
+        <category>解题报告</category>
+        <category>BZOJ</category>
+      </categories>
+      <tags>
+        <tag>OI</tag>
+        <tag>解题报告</tag>
+        <tag>BZOJ</tag>
+        <tag>图论</tag>
+        <tag>差分约束</tag>
+        <tag>最短路</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[BZOJ 1715 解题报告]]></title>
+    <url>%2FBlog%2Fpost%2Fsolution-bzoj-1715%2F</url>
+    <content type="text"><![CDATA[题意简述 多组数据，给定一个有\(n\)个点\(m\)条边的有向带权图，如果图中存在负环输出"YES"，否则输出"NO"。 时间限制（总）：5s 空间限制：128MB 题目链接 BZOJ 1715 题解 求负环的模板题。由于题目仅要求求负环，且bfs-SPFA求负环的效率不是很高，所以采用dfs-SPFA来求负环。 代码 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596#include &lt;cstdio&gt;#include &lt;algorithm&gt;#include &lt;cstring&gt;using namespace std;const int MAXN = 510;const int MAXM = 6100;template&lt;typename T&gt;T read() &#123; T result = 0;int f = 1;char c = getchar(); while(c &gt; '9' || c &lt; '0') &#123;if(c == '-') f *= -1;c = getchar();&#125; while(c &lt;= '9' &amp;&amp; c &gt;= '0') &#123;result = result * 10 + c - '0';c = getchar();&#125; return result * f;&#125;struct Graph &#123; struct Edge &#123; int next,to,weight; &#125;; Edge edges[MAXM]; int tot,heads[MAXN]; Graph() : tot(0) &#123; memset(heads,-1,sizeof(heads)); &#125; void addEdge(int u,int v,int w) &#123; edges[tot].to = v; edges[tot].next = heads[u]; edges[tot].weight = w; heads[u] = tot++; &#125; void clear() &#123; tot = 0; memset(heads,-1,sizeof(heads)); &#125;&#125; graph;int dis[MAXN];bool visit[MAXN],found;void spfa(int now) &#123; visit[now] = true; for(int i = graph.heads[now];i != -1;i = graph.edges[i].next) &#123; Graph::Edge &amp;tmpEdge = graph.edges[i]; if(dis[tmpEdge.to] &lt;= dis[now] + tmpEdge.weight) continue; if(visit[tmpEdge.to]) &#123; found = true; return; &#125; dis[tmpEdge.to] = dis[now] + tmpEdge.weight; spfa(tmpEdge.to); if(found) return; &#125; visit[now] = false;&#125;void init() &#123; graph.clear(); memset(dis,0,sizeof(dis)); memset(visit,0,sizeof(visit)); found = false;&#125;int main() &#123; int F = read&lt;int&gt;(); while(F--) &#123; init(); int N = read&lt;int&gt;(),M = read&lt;int&gt;(),W = read&lt;int&gt;(); for(int i = 0;i &lt; M;i++) &#123; int u = read&lt;int&gt;(),v = read&lt;int&gt;(),w = read&lt;int&gt;(); graph.addEdge(u,v,w); graph.addEdge(v,u,w); &#125; for(int i = 0;i &lt; W;i++) &#123; int u = read&lt;int&gt;(),v = read&lt;int&gt;(),w = read&lt;int&gt;(); graph.addEdge(u,v,-w); &#125; for(int i = 1;i &lt;= N;i++) &#123; spfa(i); if(found) &#123; break; &#125; &#125; if(found) &#123; printf("YES\n"); &#125;else &#123; printf("NO\n"); &#125; &#125; return 0;&#125;]]></content>
+      <categories>
+        <category>OI</category>
+        <category>解题报告</category>
+        <category>BZOJ</category>
+      </categories>
+      <tags>
+        <tag>OI</tag>
+        <tag>解题报告</tag>
+        <tag>BZOJ</tag>
+        <tag>图论</tag>
+        <tag>负环</tag>
+        <tag>最短路</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Codeforces 241E 解题报告]]></title>
+    <url>%2FBlog%2Fpost%2Fsolution-codeforces-241E%2F</url>
+    <content type="text"><![CDATA[题意简述 给定一张\(n\)个点，\(m\)条带权边的有向无环图，边权值都是\(1\)，你可以调整其中的一些边的边权为\(2\)，来满足任意一条从点\(1\)到达点\(n\)的路径上的边权和相等。如果无解输出"No"，否则输出"Yes"，然后输出调整后所有边的边权。 时间限制：2s 空间限制：256MB 题目链接 Codeforces 241E 题解 对题目所要求的条件进行转化： 对于任意一条经过其可以从\(1\)到达\(n\)的边，设边为\((u,v)\)，必须满足以下条件： \(2 \geq dis[v] - dis[u] \geq 1\)。 转化为约束条件： \[dis[v] - dis[u] \geq 1 \Leftrightarrow dis[u] + 1 \leq dis[v]\] \[dis[v] - dis[u] \leq 2 \Leftrightarrow dis[v] + (-2) \leq dis[u]\] 建图方式为：从点\(u\)向点\(v\)连一条权值为\(1\)的边，再从点\(v\)向点\(u\)连一条权值为\(-2\)的边。 由于题目只是要求可行解，所以最短路算法和最长路算法都可以。但以上建图方式是最短路建图方式。使用最长路解决该问题需要将不等式转化为\(dis[u] + w(u,v) &lt;= dis[v]\)的形式。 需要注意的是只有有效的边才能影响答案，所以先dfs一次来哪些点的距离值不会影响到答案，在最短路算法中不转移。同时还要注意判断负环。最后对于每条有效边\((u,v)\)，输出\(dis[v] - dis[u]\)的值，无效边输出\(1\)或\(2\)即可。 代码 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107108109110111112113114115116117#include &lt;cstdio&gt;#include &lt;algorithm&gt;#include &lt;cstring&gt;#include &lt;queue&gt;#include &lt;utility&gt;using namespace std;const int MAXM = 10010;const int MAXN = 1010;const int INF = 0x3f3f3f3f;template&lt;typename T&gt;T read() &#123; T result = 0;int f = 1;char c = getchar(); while(c &gt; '9' || c &lt; '0') &#123;if(c == '-') f *= -1;c = getchar();&#125; while(c &lt;= '9' &amp;&amp; c &gt;= '0') &#123;result = result * 10 + c - '0';c = getchar();&#125; return result * f;&#125;struct Graph &#123; struct Edge &#123; int next,to,weight; &#125;; Edge edges[MAXM]; int tot,heads[MAXN]; Graph() : tot(0) &#123; memset(heads,-1,sizeof(heads)); &#125; void addEdge(int u,int v,int w) &#123; edges[tot].next = heads[u]; edges[tot].to = v; edges[tot].weight = w; heads[u] = tot++; &#125;&#125; graph;int n,m;int dis[MAXN],cnt[MAXN];bool visit[MAXN],canVisit[MAXN];void dfs(int now) &#123; if(now == n) &#123; canVisit[now] = true; return; &#125; visit[now] = true; for(int i = graph.heads[now];i != -1;i = graph.edges[i].next) &#123; Graph::Edge &amp;tmpEdge = graph.edges[i]; if(tmpEdge.weight &lt; 0) continue; if(!visit[tmpEdge.to]) &#123; dfs(tmpEdge.to); &#125; if(canVisit[tmpEdge.to]) &#123; canVisit[now] = true; &#125; &#125;&#125;bool spfa(int start) &#123; queue&lt;int&gt; que; for(int i = 1;i &lt;= n;i++) dis[i] = -INF; que.push(start); dis[start] = 0; while(!que.empty()) &#123; int now = que.front(); que.pop(); visit[now] = false; for(int i = graph.heads[now];i != -1;i = graph.edges[i].next) &#123; Graph::Edge &amp;tmpEdge = graph.edges[i]; if(!canVisit[tmpEdge.to]) continue; if(dis[tmpEdge.to] &gt;= dis[now] + tmpEdge.weight) continue; dis[tmpEdge.to] = dis[now] + tmpEdge.weight; if(!visit[tmpEdge.to]) &#123; visit[tmpEdge.to] = true; que.push(tmpEdge.to); cnt[tmpEdge.to]++; if(cnt[tmpEdge.to] &gt; n) &#123; return false; &#125; &#125; &#125; &#125; return true;&#125;pair&lt;int,int&gt; values[MAXM];int main() &#123; n = read&lt;int&gt;(); m = read&lt;int&gt;(); for(int i = 0;i &lt; m;i++) &#123; int u = read&lt;int&gt;(),v = read&lt;int&gt;(); graph.addEdge(u,v,1); graph.addEdge(v,u,-2); values[i] = make_pair(u,v); &#125; dfs(1); memset(visit,0,sizeof(visit)); bool result = spfa(1); if(result) &#123; printf("Yes\n"); for(int i = 0;i &lt; m;i++) &#123; pair&lt;int,int&gt; &amp;tmpValue = values[i]; if(!canVisit[tmpValue.second] || !canVisit[tmpValue.first]) &#123; printf("%d\n",1); &#125;else &#123; printf("%d\n",dis[tmpValue.second] - dis[tmpValue.first]); &#125; &#125; &#125;else &#123; printf("No\n"); &#125; return 0;&#125;]]></content>
+      <categories>
+        <category>OI</category>
+        <category>解题报告</category>
+        <category>Codeforces</category>
+      </categories>
+      <tags>
+        <tag>OI</tag>
+        <tag>解题报告</tag>
+        <tag>图论</tag>
+        <tag>差分约束</tag>
+        <tag>最短路</tag>
+        <tag>Codeforces</tag>
+        <tag>Bayan 2012-2013 Elimination Round (ACM ICPC Rules, English statements)</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[BZOJ 2330 解题报告]]></title>
+    <url>%2FBlog%2Fpost%2Fsolution-bzoj-2330%2F</url>
+    <content type="text"><![CDATA[题意简述 给定\(N\)个变量和\(K\)个式子，形如： \[A = B\] \[A &lt; B\] \[A \geq B\] \[A &gt; B\] \[A \leq B\] 这些变量必须为正整数，求出一组符合所有条件的最小解，如果无解，输出\(-1\)。 时间限制（总）：10s 空间限制：128MB 题目链接 BZOJ 2330 题解 由给定的约束条件可以看出是差分约束系统的典型题，将给定的约束条件进行转化： \[A = B \Leftrightarrow A \leq B 且 B \leq A \Leftrightarrow A + 0 \leq B 且 B + 0 \leq A\] \[A &lt; B \Leftrightarrow A \leq B - 1 \Leftrightarrow A + 1 \leq B\] \[A \geq B \Leftrightarrow B \leq A \Leftrightarrow B + 0 \leq A\] \[A &gt; B \Leftrightarrow A - 1 \geq B \Leftrightarrow B + 1 \leq A\] \[A \leq B \Leftrightarrow A + 0 \leq B\] 对于以上五种约束条件，建图方式为： 从点\(A\)向点\(B\)连一条权值为\(0\)的边，从点\(B\)向点\(A\)连一条权值为\(0\)的边。 从点\(A\)向点\(B\)连一条权值为\(1\)的边。 从点\(B\)向点\(A\)连一条权值为\(0\)的边。 从点\(B\)向点\(A\)连一条权值为\(1\)的边。 从点\(A\)向点\(B\)连一条权值为\(0\)的边。 由于题目要求每个变量的最小值，等价于最小化\(x _ i - 0\)，所以跑最长路。需要注意的是题目要求变量为正整数，所以最长路算法中所有点的距离都初始化为\(1\)并直接放入队列。（也可以建虚点并向所有点连一条权值为\(1\)的边然后将虚点的距离值初始化为0，代表\(0 + 1 \leq x _ i\)，即\(x _ i \geq 1\)）。注意判断有负环的情况。 代码 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107108#include &lt;cstdio&gt;#include &lt;algorithm&gt;#include &lt;cstring&gt;#include &lt;queue&gt;using namespace std;const int MAXM = 200010;const int MAXN = 100010;template&lt;typename T&gt;T read() &#123; T result = 0;int f = 1;char c = getchar(); while(c &gt; '9' || c &lt; '0') &#123;if(c == '-') f *= -1;c = getchar();&#125; while(c &lt;= '9' &amp;&amp; c &gt;= '0') &#123;result = result * 10 + c - '0';c = getchar();&#125; return result * f;&#125;struct Graph &#123; struct Edge &#123; int next,to,weight; &#125;; Edge edges[MAXM]; int tot,heads[MAXN]; Graph() : tot(0) &#123; memset(heads,-1,sizeof(heads)); &#125; void addEdge(int u,int v,int w) &#123; edges[tot].next = heads[u]; edges[tot].to = v; edges[tot].weight = w; heads[u] = tot++; &#125;&#125; graph;int N,K,dis[MAXN],cnt[MAXN];bool visit[MAXN];bool spfa() &#123; queue&lt;int&gt; que; for(int i = 1;i &lt;= N;i++) &#123; dis[i] = 1; visit[i] = true; que.push(i); &#125; while(!que.empty()) &#123; int now = que.front(); que.pop(); visit[now] = false; for(int i = graph.heads[now];i != -1;i = graph.edges[i].next) &#123; Graph::Edge &amp;tmpEdge = graph.edges[i]; if(dis[tmpEdge.to] &gt;= dis[now] + tmpEdge.weight) continue; dis[tmpEdge.to] = dis[now] + tmpEdge.weight; if(!visit[tmpEdge.to]) &#123; visit[tmpEdge.to] = true; que.push(tmpEdge.to); cnt[tmpEdge.to]++; if(cnt[tmpEdge.to] &gt; N) &#123; return false; &#125; &#125; &#125; &#125; return true;&#125;int main() &#123; N = read&lt;int&gt;(); K = read&lt;int&gt;(); while(K--) &#123; int opt = read&lt;int&gt;(),A = read&lt;int&gt;(),B = read&lt;int&gt;(); switch(opt) &#123; case 1: &#123; graph.addEdge(B,A,0); graph.addEdge(A,B,0); break; &#125; case 2: &#123; graph.addEdge(A,B,1); break; &#125; case 3: &#123; graph.addEdge(B,A,0); break; &#125; case 4: &#123; graph.addEdge(B,A,1); break; &#125; case 5: &#123; graph.addEdge(A,B,0); break; &#125; &#125; &#125; bool result = spfa(); if(!result) &#123; printf("-1\n"); &#125;else &#123; long long result = 0; for(int i = 1;i &lt;= N;i++) &#123; result += dis[i]; &#125; printf("%lld\n",result); &#125; return 0;&#125;]]></content>
+      <categories>
+        <category>OI</category>
+        <category>解题报告</category>
+        <category>BZOJ</category>
+      </categories>
+      <tags>
+        <tag>OI</tag>
+        <tag>解题报告</tag>
+        <tag>BZOJ</tag>
+        <tag>图论</tag>
+        <tag>差分约束</tag>
+        <tag>最长路</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[差分约束系统 学习笔记]]></title>
+    <url>%2FBlog%2Fpost%2Fstudy-note-system-of-difference-constraints%2F</url>
+    <content type="text"><![CDATA[差分约束系统 差分约束系统，是一类关于不等式组的线性规划问题。给定\(n\)个变量和\(m\)个形如\(x_i - x_j \leq val(val已知)\)的不等式，要求出一组可行解或求出一组最小/大化 \(x _ t - x _ s(s,t给定)\)的解。 差分约束系统的转化 由于仅靠给定的约束条件很难在较快的速度内求解出希望的解，所以考虑将差分约束转化为其他模型。对给定的约束条件进行转化。 \[x _ i - x _ j \leq val \Leftrightarrow x _ i \leq x _ j + val \Leftrightarrow x _ j + val \geq x _ i\] 最短路的转移判断条件为： \[dis _ i + w(i,j) &lt; dis _ j\] 所以实际上最短路的计算就是尽量满足\(dis _ i + w(i,j) \geq dis _ j\)的过程。于是考虑将差分约束转化为图论模型。将\(m\)个不等式转化为\(x _ i + val \geq x _ j\)的形式，每个不等式等同于从点\(i\)向点\(j\)连一条权值为\(val\)的有向边来代表这条约束，然后在形成的图上使用最短路算法计算。 三角形不等式 下面我们考虑一个简单的例子。有下列三个不等式： \[B - A \leq c\] \[C - B \leq a\] \[C - A \leq b\] 在满足以上约束条件的情况下求\(C - A\)的最大值。变换不等式得： \[A + c \geq B\] \[B + a \geq C\] \[A + b \geq C\] 将第一个约束条件和第二个约束条件加起来得到： \[C - A \leq a + c\] 转化为图论模型如下图： 可以发现同时满足\(C - A \leq a + c\)与\(C - A \leq b\)两个约束条件的\(C - A\)的最大值正好对应了图上从\(A\)到\(C\)的最短路：\(min(a + c,b)\)。这就是三角形不等式。将这种情况推广到拥有\(n\)个变量和\(m\)个不等式的情况，差分约束系统就变成了\(n\)个点\(m\)条边的最短路问题了。 差分约束系统的解 差分约束系统不一定有解，也不一定有有穷个解。 差分约束系统无解的情况即\(x _ t - x _ s\)不存在最大值，代表不等式间存在无法满足的关系，\(x _ t - x _ s \leq val\)中的\(val\)可以为无限小。这种情况体现在图论模型中为无法求得最短路，即图中有负权环。 差分系统有无穷个解的情况即\(x _ t - x _ s\)的最大值可以是无穷大，代表\(x _ t\)与\(x _ s\)之间不存在约束关系。这种情况体现在图论模型中为\(s\)与\(t\)不连通。 对于这两种特殊的状况，题目一般会给出输出方式。差分约束系统的解有三种可能：无解，有穷个解，无穷个解。 差分约束系统的变形 如果仍然给定\(n\)个变量和\(m\)个不等式，但是要求\(x _ t - x _ s(s,t给定)\)的最小值。这时候就不能使用最短路算法来解决问题了。因为最短路算法只能求出\(x _ t - x _ s\)的最大值。我们仍然考虑三角形不等式。但是这次给定的不等式为\(x _ i - x _ j \geq val(val已知)\)的形式： 由： \[B - A \geq c\] \[C - B \geq a\] \[C - A \geq b\] 转化为： \[A + c \leq B\] \[B + a \leq C\] \[A + b \leq C\] 将\(B - A \geq c\)和\(C - B \geq a\)加起来得到： \[C - A \geq a + c\] 转化为图论模型如下图： 可以发现同时满足\(C - A \geq a + c\)与\(C - A \geq b\)两个约束条件的\(C - A\)的最小值正好对应了图上从\(A\)到\(C\)的最长路：\(max(a + c,b)\)。同上，这种情况也可以推广到拥有\(n\)个变量和\(m\)个不等式的情况，然后使用最长路算法解决。 不等式标准化 通过以上的变形，我们发现差分约束系统所给定的约束并不一定只有\(x _ i - x _ j \leq val\)这一种形式。因为我们可以将不等式变形，所以给定的不等式的形式是无关紧要的。唯一需要关注的是题目的需求。如果题目要求将\(x _ t - x _ s\)最小化，那么使用最长路算法，要求\(x _ t - x _ s\)最大化则使用最短路算法。 还有，很多时候题目所给定的不等式带有大于号或小于号。在这种情况下，如果变量的取值范围在整数域，我们应该将其转化为大于等于或小于等于的形式。例如：\[A - B &lt; c \Leftrightarrow A - B \leq c - 1\] 例题 BZOJ 2330 解题报告 Codeforces 241E 解题报告]]></content>
+      <categories>
+        <category>OI</category>
+        <category>学习笔记</category>
+        <category>图论</category>
+      </categories>
+      <tags>
+        <tag>OI</tag>
+        <tag>学习笔记</tag>
+        <tag>图论</tag>
+        <tag>差分约束</tag>
+        <tag>最长路</tag>
+        <tag>最短路</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[BZOJ 2763 解题报告]]></title>
+    <url>%2FBlog%2Fpost%2Fsolution-bzoj-2763%2F</url>
+    <content type="text"><![CDATA[题意简述 给定一个\(n(2 \leq n \leq 10 ^ 4)\)个点，\(m(1 \leq \ 5 * 10 ^ 4)\)条边的有权无向图，\((0 \leq 边权 \leq n)\)，你可以将其中的\(k(0 \leq k \leq 10)\)条边的边权设为\(0\)，给定起点和终点，求起点到终点的最短路径。 时间限制（总）：10s 空间限制：128MB 题目链接 BZOJ 2763 题解 题目要求最短路，所以使用最短路算法解决。但与普通的最短路不同，可以选择图中\(k\)条边使其变为\(0\)权边，所以可以把图复制\(k\)次，第\(i\)层图代表将\(i\)条边权设为\(0\)后的最短路，然后每次在最短路松弛过程中同时对上一层的点进行松弛。因为\(k\)层图自身是相同的，所以可以一次性对\(k\)层图进行松弛，而不需要真正复制k次图，只是利用这种思想来理解。 代码 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596#include &lt;cstdio&gt;#include &lt;algorithm&gt;#include &lt;cstring&gt;#include &lt;queue&gt;using namespace std;const int MAXN = 10010;const int MAXM = 100010;const int MAXK = 11;const int INF = 0x3f3f3f3f;template&lt;typename T&gt;T read() &#123; T result = 0;int f = 1;char c = getchar(); while(c &gt; '9' || c &lt; '0') &#123;if(c == '-') f *= -1;c = getchar();&#125; while(c &lt;= '9' &amp;&amp; c &gt;= '0') &#123;result = result * 10 + c - '0';c = getchar();&#125; return result * f;&#125;struct Graph &#123; struct Edge &#123; int next,to,weight; &#125;; Edge edges[MAXM]; int tot,heads[MAXN]; Graph() : tot(0) &#123; memset(heads,-1,sizeof(heads)); &#125; void addEdge(int u,int v,int w) &#123; edges[tot].next = heads[u]; edges[tot].to = v; edges[tot].weight = w; heads[u] = tot++; &#125; void addTwoEdges(int u,int v,int w) &#123; addEdge(u,v,w); addEdge(v,u,w); &#125;&#125; graph;int n,m,k,dis[MAXN][MAXK];bool visit[MAXN];void spfa(int S) &#123; memset(dis,INF,sizeof(dis)); memset(visit,false,sizeof(visit)); queue&lt;int&gt; que; que.push(S); for(int i = 0;i &lt;= k;i++) &#123; dis[S][i] = 0; &#125; visit[S] = true; while(!que.empty()) &#123; int now = que.front(); que.pop(); visit[now] = false; for(int nowK = 0;nowK &lt;= k;nowK++) &#123; for(int i = graph.heads[now];i != -1;i = graph.edges[i].next) &#123; Graph::Edge &amp;tmpEdge = graph.edges[i]; if(dis[now][nowK] + tmpEdge.weight &gt;= dis[tmpEdge.to][nowK]) continue; dis[tmpEdge.to][nowK] = dis[now][nowK] + tmpEdge.weight; if(!visit[tmpEdge.to]) &#123; visit[tmpEdge.to] = true; que.push(tmpEdge.to); &#125; &#125; if(nowK == k) continue; for(int i = graph.heads[now];i != -1;i = graph.edges[i].next) &#123; Graph::Edge &amp;tmpEdge = graph.edges[i]; if(dis[now][nowK] &gt;= dis[tmpEdge.to][nowK + 1]) continue; dis[tmpEdge.to][nowK + 1] = dis[now][nowK]; if(!visit[tmpEdge.to]) &#123; visit[tmpEdge.to] = true; que.push(tmpEdge.to); &#125; &#125; &#125; &#125;&#125;int main() &#123; n = read&lt;int&gt;(); m = read&lt;int&gt;(); k = read&lt;int&gt;(); int s = read&lt;int&gt;(),t = read&lt;int&gt;(); for(int i = 0;i &lt; m;i++) &#123; int a = read&lt;int&gt;(),b = read&lt;int&gt;(),c = read&lt;int&gt;(); graph.addTwoEdges(a,b,c); &#125; spfa(s); printf("%d\n",dis[t][k]); return 0;&#125;]]></content>
+      <categories>
+        <category>OI</category>
+        <category>解题报告</category>
+        <category>BZOJ</category>
+      </categories>
+      <tags>
+        <tag>OI</tag>
+        <tag>解题报告</tag>
+        <tag>BZOJ</tag>
+        <tag>最短路</tag>
+        <tag>分层图</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[BZOJ 2834 解题报告]]></title>
+    <url>%2FBlog%2Fpost%2Fsolution-bzoj-2834%2F</url>
+    <content type="text"><![CDATA[题意简述 有一个\(n * n(n \leq 2 * 10 ^ 4)\)的矩阵，矩阵上只能横着或竖着移动，移动代价是\(2/每格\)。矩阵上还有\(m(m \leq 10 ^ 5)\)个点可以原地不动改变移动的方向（横着变为竖着，竖着变为横着），代价为\(1/每次\)。给定起点和终点，求从起点移动到终点的最小代价。如果从起点出发无法到达终点，输出\(-1\)。 时间限制（总）：10s 空间限制：128MB 题目链接 BZOJ 2834 题解 题目要求最小代价，所以考虑使用最短路算法解决。由于\(n ^ 2\)过大，所以只考虑能改变方向的\(m\)个点以及起点和终点。分别处理竖着移动和横着移动的情况，对每个点拆点，设点的编号为\(i\)，那么拆点后点的编号就是\(2 \times i和2 \times i + 1\)。第一个点用于横向连边，第二个点用于纵向连边。然后同行和同列的相邻两点间连无向边，边权为矩阵上两点距离\(\times 2\)。如果不是起点或终点，则拆成的两个点之间连一条边权为\(1\)的无向边，否则连一条边权为\(0\)的无向边。之后使用最短路算法就可以得到答案。注意不要忘记判断不可达的状况。 代码 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107108109110111112113114115116117118119120121122123#include &lt;cstdio&gt;#include &lt;algorithm&gt;#include &lt;cstring&gt;#include &lt;queue&gt;#include &lt;utility&gt;#include &lt;cmath&gt;using namespace std;const int MAXM = 800010;const int MAXN = 200010;const int INF = 0x3f3f3f3f;template&lt;typename T&gt;T read() &#123; T result = 0;int f = 1;char c = getchar(); while(c &gt; '9' || c &lt; '0') &#123;if(c == '-') f *= -1;c = getchar();&#125; while(c &lt;= '9' &amp;&amp; c &gt;= '0') &#123;result = result * 10 + c - '0';c = getchar();&#125; return result * f;&#125;struct Graph &#123; struct Edge &#123; int next,to,weight; &#125;; Edge edges[MAXM]; int tot,heads[MAXN]; Graph() : tot(0) &#123; memset(heads,-1,sizeof(heads)); &#125; void addEdge(int u,int v,int w) &#123; edges[tot].next = heads[u]; edges[tot].to = v; edges[tot].weight = w; heads[u] = tot++; &#125; void addTwoEdges(int u,int v,int w) &#123; addEdge(u,v,w); addEdge(v,u,w); &#125;&#125; graph;int dis[MAXN];bool visit[MAXN];void spfa(int S) &#123; queue&lt;int&gt; que; que.push(S); memset(dis,INF,sizeof(dis)); memset(visit,false,sizeof(visit)); visit[S] = true; dis[S] = 0; while(!que.empty()) &#123; int now = que.front(); que.pop(); visit[now] = false; for(int i = graph.heads[now];i != -1;i = graph.edges[i].next) &#123; Graph::Edge &amp;tmpEdge = graph.edges[i]; if(dis[now] + tmpEdge.weight &gt;= dis[tmpEdge.to]) continue; dis[tmpEdge.to] = dis[now] + tmpEdge.weight; if(!visit[tmpEdge.to]) &#123; visit[tmpEdge.to] = true; que.push(tmpEdge.to); &#125; &#125; &#125;&#125;struct Data &#123; int x,y,id; Data() : x(0) , y(0) , id(0) &#123; &#125; Data(int x,int y,int id) : x(x) , y(y) , id(id) &#123; &#125;&#125; datas[MAXN];bool comp1(const Data &amp;a,const Data &amp;b) &#123; if(a.x == b.x) return a.y &lt; b.y; return a.x &lt; b.x;&#125;bool comp2(const Data &amp;a,const Data &amp;b) &#123; if(a.y == b.y) return a.x &lt; b.x; return a.y &lt; b.y;&#125;int main() &#123; int n = read&lt;int&gt;(),m = read&lt;int&gt;(),S = m,T = m + 1; for(int i = 0;i &lt; m + 2;i++) &#123; int x = read&lt;int&gt;(),y = read&lt;int&gt;(); datas[i] = Data(x,y,i); &#125; for(int i = 0;i &lt; m;i++) &#123; graph.addTwoEdges(2 * i,2 * i + 1,1); &#125; sort(datas,datas + m + 2,comp1); for(int i = 1;i &lt; m + 2;i++) &#123; if(datas[i].x == datas[i - 1].x) &#123; graph.addTwoEdges(2 * datas[i].id,2 * datas[i - 1].id,2 * (datas[i].y - datas[i - 1].y)); &#125; &#125; sort(datas,datas + m + 2,comp2); for(int i = 1;i &lt; m + 2;i++) &#123; if(datas[i].y == datas[i - 1].y) &#123; graph.addTwoEdges(2 * datas[i].id + 1,2 * datas[i - 1].id + 1,2 * (datas[i].x - datas[i - 1].x)); &#125; &#125; S *= 2; T *= 2; graph.addTwoEdges(S,S + 1,0); graph.addTwoEdges(T,T + 1,0); spfa(S); if(dis[T] == INF) &#123; printf("-1\n"); &#125;else &#123; printf("%d\n",dis[T]); &#125; return 0;&#125;]]></content>
+      <categories>
+        <category>OI</category>
+        <category>解题报告</category>
+        <category>BZOJ</category>
+      </categories>
+      <tags>
+        <tag>OI</tag>
+        <tag>解题报告</tag>
+        <tag>BZOJ</tag>
+        <tag>最短路</tag>
+        <tag>分层图</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Codeforces 459B 解题报告]]></title>
+    <url>%2FBlog%2Fpost%2Fsolution-codeforces-459B%2F</url>
+    <content type="text"><![CDATA[题意简述 给定一个数字 \(n(2 \leq n \leq 2 \cdot 10 ^ 5)\) 和 \(n\) 个整数 \(b _ 1,b _ 2.....b _ n(1 \leq b _ i \leq 10 ^ 9)\) 。输出序列中最大的元素和最小的元素的差，以及从序列中选择两个元素，有多少种方案使这两个元素的差最大。 时间限制：1s 空间限制：256MB 题目链接 Codeforces 459B 题解 找到序列中最大的元素与最小的元素并计算个数。如果最大元素不等于最小元素，最大差值为最大元素减去最小元素，方案数为最大元素与最小元素的个数的乘积；如果最大元素等于最小元素，设最大元素个数为 \(n\) ，最大差值为 \(0\) ，方案数为 \(1 + 2 + 3 + ...... + n - 1\) ，即 \(\frac{n \times n - 1}{2}\)。 在统计最大元素和最小元素的过程中，要注意选中的两个元素不能为一个，不能同时更新最大值和最小值。于是优先更新最大值与最大值计数，在更新最大值的过程中如果旧有最大值可用于更新最小值，则用旧有最大值更新最小值，同时更新用旧有最大值计数更新最小值计数，然后更新最大值与最大值计数。判断最大元素与最小元素是否相同只需要检查最小值是否被更新过。 代码 12345678910111213141516171819202122232425262728293031323334353637383940#include &lt;iostream&gt;#include &lt;algorithm&gt;using namespace std;const int INF = 0x3f3f3f3f;int main() &#123; ios::sync_with_stdio(false); cin.tie(0); int n; cin &gt;&gt; n; int maxValue = -INF,maxValueCount = 1,minValue = INF,minValueCount = 1; for(int i = 0;i &lt; n;i++) &#123; int tmpValue; cin &gt;&gt; tmpValue; if(tmpValue &gt; maxValue) &#123; if(maxValue != -INF &amp;&amp; maxValue &lt; minValue) &#123; minValue = maxValue; minValueCount = maxValueCount; &#125; maxValue = tmpValue; maxValueCount = 1; &#125;else if(tmpValue == maxValue) &#123; maxValueCount++; &#125;else if(tmpValue &lt; minValue) &#123; minValue = tmpValue; minValueCount = 1; &#125;else if(tmpValue == minValue) &#123; minValueCount++; &#125; &#125; if(minValue == INF) &#123; long long result = (1 + maxValueCount - 1) * 1LL * (maxValueCount - 1) / 2; cout &lt;&lt; 0 &lt;&lt; " " &lt;&lt; result &lt;&lt; endl; &#125;else &#123; cout &lt;&lt; maxValue - minValue &lt;&lt; " " &lt;&lt; maxValueCount * 1LL * minValueCount &lt;&lt; endl; &#125; return 0;&#125;]]></content>
+      <categories>
+        <category>OI</category>
+        <category>解题报告</category>
+        <category>Codeforces</category>
+      </categories>
+      <tags>
+        <tag>OI</tag>
+        <tag>解题报告</tag>
+        <tag>Codeforces</tag>
+        <tag>Codeforces Round #261 (Div. 2)</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Codeforces 459A 解题报告]]></title>
+    <url>%2FBlog%2Fpost%2Fsolution-codeforces-459A%2F</url>
+    <content type="text"><![CDATA[题意简述 给定直角坐标系中一个正方形任意两个不同顶点的坐标\(x _ 1,y _ 1,x _ 2,y _ 2 (-100 \leq x _ 1,y _ 1,x _ 2,y _ 2 \leq 100)\) ，求另外两个点的坐标\(x _ 3,y _ 3,x _ 4,y _ 4(-1000 \leq x _ 3,y _ 3,x _ 4,y _ 4 \leq 1000)\)。如果给定的两个点无法同时作为一个正方形的两个不同顶点，输出 \(-1\) 。 时间限制：1s 空间限制：256MB 题目链接 Codeforces 459A 题解 根据正方形的边长相等这一性质进行另外两个顶点的坐标计算。给定的两个点的关系共有四种情况： 两点的连线与x轴平行。（两点的横坐标相等） 两点的连线与y轴平行。（两点的纵坐标相等） 两点为正方形对角线上的两个点。（两点横坐标差值的绝对值与纵坐标差值的绝对值相等） 两点无法同时作为一个正方形的两个不同顶点。（除以上三种情况外的所有情况） 判断两点的关系，之后就可以根据边长进行计算得出结果。 代码 12345678910111213141516171819202122#include &lt;iostream&gt;#include &lt;algorithm&gt;using namespace std;int main() &#123; ios::sync_with_stdio(false); cin.tie(0); int x1,y1,x2,y2; cin &gt;&gt; x1 &gt;&gt; y1 &gt;&gt; x2 &gt;&gt; y2; int diffX = x2 - x1,diffY = y2 - y1; if(diffX == 0) &#123; cout &lt;&lt; x1 + diffY &lt;&lt; " " &lt;&lt; y1 &lt;&lt; " " &lt;&lt; x1 + diffY &lt;&lt; " " &lt;&lt; y2 &lt;&lt; endl; &#125;else if(diffY == 0)&#123; cout &lt;&lt; x1 &lt;&lt; " " &lt;&lt; y1 + diffX &lt;&lt; " " &lt;&lt; x2 &lt;&lt; " " &lt;&lt; y1 + diffX &lt;&lt; endl; &#125;else if(abs(diffX) == abs(diffY)) &#123; cout &lt;&lt; x1 &lt;&lt; " " &lt;&lt; y1 + diffY &lt;&lt; " " &lt;&lt; x1 + diffX &lt;&lt; " " &lt;&lt; y1 &lt;&lt; endl; &#125;else &#123; cout &lt;&lt; -1 &lt;&lt; endl; &#125; return 0;&#125;]]></content>
+      <categories>
+        <category>OI</category>
+        <category>解题报告</category>
+        <category>Codeforces</category>
+      </categories>
+      <tags>
+        <tag>OI</tag>
+        <tag>解题报告</tag>
+        <tag>Codeforces</tag>
+        <tag>Codeforces Round #261 (Div. 2)</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Codeforces 454B 解题报告]]></title>
+    <url>%2FBlog%2Fpost%2Fsolution-codeforces-454B%2F</url>
+    <content type="text"><![CDATA[题意简述 给定一个数字 \(n(2 \leq n \leq 10 ^ 5)\) 和一个长度为 \(n\) 的序列（序列中的每个元素 \(1 \leq a _ i \leq 10 ^ 5\)），只允许一种操作：将序列尾端的元素移动到序列的头部。问能否使用这种操作让序列中的元素非递减。如果能，输出最少的操作次数，如果不能，输出 \(-1\) 。 时间限制：1s 空间限制：256MB 题目链接 Codeforces 454B 题解 可以发现一个规律：能够被这种方式排序的序列必然满足以下条件：该序列可以被划分为前后两个序列，两个序列均为非递减序列，后序列中的每个元素均小于等于前序列头部的元素。此时对该序列排序的代价为后序列的长度。（后序列可以为空，此时答案为 \(0\) ）由于要求操作次数最小，所以后序列的大小尽量小。根据以上规律检查整个序列即可得到答案。 代码 1234567891011121314151617181920212223242526272829303132333435363738394041#include &lt;iostream&gt;using namespace std;int main() &#123; ios::sync_with_stdio(false); cin.tie(0); int n; cin &gt;&gt; n; bool reCounted = false; int result = 0,lastValue = -1,firstValue = -1; for(int i = 0;i &lt; n;i++) &#123; int tmpValue; cin &gt;&gt; tmpValue; if(lastValue == -1) &#123; lastValue = tmpValue; firstValue = tmpValue; continue; &#125; if(!reCounted) &#123; if(tmpValue &lt; lastValue) &#123; if(tmpValue &lt;= firstValue) &#123; reCounted = true; result++; &#125;else &#123; result = -1; break; &#125; &#125; &#125;else &#123; if(tmpValue &lt; lastValue || tmpValue &gt; firstValue) &#123; result = -1; break; &#125;else &#123; result++; &#125; &#125; lastValue = tmpValue; &#125; cout &lt;&lt; result &lt;&lt; endl; return 0;&#125;]]></content>
+      <categories>
+        <category>OI</category>
+        <category>解题报告</category>
+        <category>Codeforces</category>
+      </categories>
+      <tags>
+        <tag>OI</tag>
+        <tag>解题报告</tag>
+        <tag>Codeforces</tag>
+        <tag>Codeforces Round #259 (Div. 2)</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Codeforces 454A 解题报告]]></title>
+    <url>%2FBlog%2Fpost%2Fsolution-codeforces-454A%2F</url>
+    <content type="text"><![CDATA[题意简述 给定一个整数 \(n(3 \leq n \leq 101；n是奇数)\) ，要求按照规定输出一个 \(n \times n\) 的矩阵（详见样例）。 时间限制：1s 空间限制：256MB 题目链接 Codeforces 454A 题解 观察样例可以发现，矩阵沿 \(n / 2\) 行对称，第 \(i\) 行中的字符 \(D\) 与行中心字符的距离不超过 \(n / 2 - \mid n / 2 - i \mid\)，模拟打印整个矩阵即可。 代码 123456789101112131415161718192021222324#include &lt;iostream&gt;#include &lt;algorithm&gt;using namespace std;int main() &#123; ios::sync_with_stdio(false); cin.tie(0); int n; cin &gt;&gt; n; int limit = n / 2; for(int i = 0;i &lt; n;i++) &#123; int nowMaxDisplayDis = limit - abs(limit - i); for(int j = 0;j &lt; n;j++) &#123; if(abs(limit - j) &lt;= nowMaxDisplayDis) &#123; cout &lt;&lt; "D"; &#125;else &#123; cout &lt;&lt; "*"; &#125; &#125; cout &lt;&lt; endl; &#125; return 0;&#125;]]></content>
+      <categories>
+        <category>OI</category>
+        <category>解题报告</category>
+        <category>Codeforces</category>
+      </categories>
+      <tags>
+        <tag>OI</tag>
+        <tag>解题报告</tag>
+        <tag>Codeforces</tag>
+        <tag>Codeforces Round #259 (Div. 2)</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[如何使用Jekyll搭建一个个人博客]]></title>
+    <url>%2FBlog%2Fpost%2Fhow-to-build-a-blog-by-jekyll%2F</url>
+    <content type="text"><![CDATA[注册Coding.net账号 访问Coding.net官网，并注册一个账号，然后新建一个项目。如果想要仅用二级域名访问（即username.coding.me），项目名称应为username.coding.me，否则博客的访问地址为username.coding.me/项目名称，且在这种情况下，有一种特殊的现象需要处理，本文第九部分会有说明。（注：username为账号名称） 安装Jekyll（如果不需要本地调试可以跳过此步骤） 在安装Jekyll之前，你需要安装Ruby。本文介绍在Windows环境下如何安装Jekyll。首先下载RubyInstaller，在RubyInstaller安装完成后使用gem来安装Jekyll，输入命令：gem install Jekyll然后等待一段时间安装就完成了。（由于gem下载源在国外，这一段时间会变得非常长，所以在安装Jekyll前可以更换gem源）。 建立目录结构 Jekyll是一个静态网页生成器，只要按照规范建立目录Jekyll就可以帮你生成静态网页。建立目录结构有两种方案： 1. 使用jekyll new [blogname]命令来自动的生成一个目录结构。在该命令执行目录下会出现一个名称为blogname的文件夹，文件夹内部就是建立好的目录结构，该文件夹内部就是博客的根目录。使用该命令需要bundler依赖，所以可以先执行gem install bundler，否则命令执行会报错。 2. 手动建立目录结构，关于Jekyll目录结构的详细信息请查看Jekyll官方文档，本文只做简单介绍。新建一个文件夹作为博客根目录，然后在该文件夹内创建以下文件或文件夹： _config.yml: 配置文件，进行依赖设置和站点全局信息设置。 _posts: 存放发布到博客上的文章。 _layouts: 存放布局文件。 创建博客布局 如果使用方案一建立目录结构，目录中本身就含有布局，如果使用默认布局可以选择跳过此步骤。博客布局应在_layouts文件夹创建。布局可以自行创建或者直接使用他人的布局（将_layouts文件夹以及该文件夹中文件所引用的所有资源都拷贝到博客根目录下），本文介绍一种最简单的布局： 在_layouts文件夹下创建default.html，并输入以下内容： 12345&lt;html&gt; &lt;body&gt; &#123;&#123; content &#125;&#125; &lt;/body&gt;&lt;/html&gt; 一个最简单的布局就建立好了。其中值得注意的是{{ content }}，这是Jekyll提供的一种功能，这段语句告诉Jekyll将编译好的博客内容插入到这来形成文章。关于这种用法的相信信息也可以到Jekyll官方文档查看。布局文件可以创建多个，名称不限内容不限，而且可以互相引用，Jekyll不会对除使用特殊语句的其他部分进行任何更改。 建立博客索引 在博客根目录下创建index.html，用以显示所有的文章，提供访问索引。使用index.*这种文件名可以在访问时省略文件名，即根目录下的xxx.html需要通过url/xxx.html访问，而根目录下的index.*直接输入url就可以访问了，该规则适用于任何目录。然后让index.html使用default布局，在index.html顶端输入以下内容： 123---layout: default--- 就表示使用default布局了，index.html中的内容将替换掉default.html中的{{ content }}并生成最终的index.html。两条---之间的部分被称之为YAML头信息，可以指定一些变量的值，还可以自定义变量。然后继续输入以下内容： 123&#123;% for post in site.posts % &#125; &lt;p&gt;&lt;a href=" &#123;&#123; post.url &#125;&#125;"&gt;&#123;&#123; post.title &#125;&#125;&lt;/a&gt;&lt;/p&gt;&#123;% endfor %&#125; 这段代码会列出所有_posts文件夹下的文章，索引就生成完毕了。 撰写文章 文章的撰写在_posts文件夹下完成，可以使用Markdown语法。需要注意的是头信息和文件名称。Jekyll对于文件名称的要求是YYYY-MM-DD-name.md，例如：2017-04-01-Hello-World.md，而2017-4-1-Hello-World.md就不能被正确的识别。 本地调试 在博客根目录下，执行jekyll serve命令，然后访问localhost:4000，你就可以在本地预览博客的构建效果了。与此同时，更改文章或布局的内容都会即时的反映在预览中。 提交至Coding.net 在博客根目录下建立Git仓库，然后将内容提交到Coding.net上你创建的项目中。找到Pages服务页面，然后选择master分支并确定。在一段时间之后，你的博客就正式的构建好了，访问地址在第一部分中有说明。每次发布新文章都需要重复第六部分到第八部分。 关于非username.coding.me名称项目的特殊说明 如果读者在非username.coding.me项目中创建了自己的博客，会发现一种十分奇怪的现象：只有博客的主页可以访问，任何的跳转链接都会转到无效页面。这是因为超链接在跳转过程中是以username.coding.me为前缀的，没有后面的/项目名称部分。对于这种现象的解决方案为： 一、在_config.yml内新建一行，输入：baseurl： /项目名称 二、将所有的超链接都替换为：{{ "原超链接" | prepend: site.baseurl }} 然后提交更改，等待重新构建就可以成功的访问了。 题外话： 其实GitHub也是提供了Pages服务的，而且也支持Jekyll，但是由于国内一些特殊的原因，GitHub有时候会出现无法访问的现象，所以我将博客搭在了Coding.net上。使用Pages服务搭建博客好处在于静态网页访问速度快，而且不需要花钱租VPS，如果有能力租用VPS的话建立一个属于自己的可以互动的博客是个更好的选择。 JekyllWriter也是一个不错的博客编写工具，不过可能由于我的操作问题，JekyllWriter发布的文章无法删除，而且布局并不是很自由，所以最后我放弃使用它了。有兴趣的读者可以尝试一下。 这是我第一次写博客，如果有什么建议可以发在评论里。]]></content>
+      <categories>
+        <category>其他</category>
+        <category>搭建博客</category>
+      </categories>
+      <tags>
+        <tag>搭建博客</tag>
+        <tag>Jekyll</tag>
+        <tag>Pages服务</tag>
+        <tag>Coding.net</tag>
+      </tags>
+  </entry>
+</search>
