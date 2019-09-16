@@ -59,20 +59,17 @@
 </script>
 
   <meta name="description" content="差分约束系统 差分约束系统，是一类关于不等式组的线性规划问题。给定\(n\)个变量和\(m\)个形如\(x_i - x_j \leq val(val已知)\)的不等式，要求出一组可行解或求出一组最小/大化 \(x _ t - x _ s(s,t给定)\)的解。">
-<meta name="keywords" content="OI,学习笔记,图论,差分约束,最长路,最短路">
+<meta name="keywords" content="OI,学习笔记,图论,最短路,差分约束,最长路">
 <meta property="og:type" content="article">
 <meta property="og:title" content="差分约束系统 学习笔记">
 <meta property="og:url" content="https://igronemyk.github.io/Blog/post/study-note-system-of-difference-constraints/index.html">
 <meta property="og:site_name" content="Igronemyk&#39;s Blog">
 <meta property="og:description" content="差分约束系统 差分约束系统，是一类关于不等式组的线性规划问题。给定\(n\)个变量和\(m\)个形如\(x_i - x_j \leq val(val已知)\)的不等式，要求出一组可行解或求出一组最小/大化 \(x _ t - x _ s(s,t给定)\)的解。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://igronemyk.github.io/Blog/post/study-note-system-of-difference-constraints/1.png">
-<meta property="og:image" content="https://igronemyk.github.io/Blog/post/study-note-system-of-difference-constraints/1.png">
 <meta property="og:updated_time" content="2019-09-16T06:49:45.434Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="差分约束系统 学习笔记">
 <meta name="twitter:description" content="差分约束系统 差分约束系统，是一类关于不等式组的线性规划问题。给定\(n\)个变量和\(m\)个形如\(x_i - x_j \leq val(val已知)\)的不等式，要求出一组可行解或求出一组最小/大化 \(x _ t - x _ s(s,t给定)\)的解。">
-<meta name="twitter:image" content="https://igronemyk.github.io/Blog/post/study-note-system-of-difference-constraints/1.png">
   <link rel="canonical" href="https://igronemyk.github.io/Blog/post/study-note-system-of-difference-constraints/">
 
 
@@ -365,14 +362,14 @@
 <h1 id="差分约束系统的转化">差分约束系统的转化</h1>
 <p>由于仅靠给定的约束条件很难在较快的速度内求解出希望的解，所以考虑将差分约束转化为其他模型。对给定的约束条件进行转化。 <span class="math display">\[x _ i - x _ j \leq val \Leftrightarrow x _ i \leq x _ j + val \Leftrightarrow x _ j + val \geq x _ i\]</span> 最短路的转移判断条件为： <span class="math display">\[dis _ i + w(i,j) &lt; dis _ j\]</span> 所以实际上最短路的计算就是尽量满足<span class="math inline">\(dis _ i + w(i,j) \geq dis _ j\)</span>的过程。于是考虑将差分约束转化为图论模型。将<span class="math inline">\(m\)</span>个不等式转化为<span class="math inline">\(x _ i + val \geq x _ j\)</span>的形式，每个不等式等同于从点<span class="math inline">\(i\)</span>向点<span class="math inline">\(j\)</span>连一条权值为<span class="math inline">\(val\)</span>的有向边来代表这条约束，然后在形成的图上使用最短路算法计算。</p>
 <h1 id="三角形不等式">三角形不等式</h1>
-<p>下面我们考虑一个简单的例子。有下列三个不等式： <span class="math display">\[B - A \leq c\]</span> <span class="math display">\[C - B \leq a\]</span> <span class="math display">\[C - A \leq b\]</span> 在满足以上约束条件的情况下求<span class="math inline">\(C - A\)</span>的最大值。变换不等式得： <span class="math display">\[A + c \geq B\]</span> <span class="math display">\[B + a \geq C\]</span> <span class="math display">\[A + b \geq C\]</span> 将第一个约束条件和第二个约束条件加起来得到： <span class="math display">\[C - A \leq a + c\]</span> 转化为图论模型如下图： <img src="1.png"> 可以发现同时满足<span class="math inline">\(C - A \leq a + c\)</span>与<span class="math inline">\(C - A \leq b\)</span>两个约束条件的<span class="math inline">\(C - A\)</span>的最大值正好对应了图上从<span class="math inline">\(A\)</span>到<span class="math inline">\(C\)</span>的最短路：<span class="math inline">\(min(a + c,b)\)</span>。这就是三角形不等式。将这种情况推广到拥有<span class="math inline">\(n\)</span>个变量和<span class="math inline">\(m\)</span>个不等式的情况，差分约束系统就变成了<span class="math inline">\(n\)</span>个点<span class="math inline">\(m\)</span>条边的最短路问题了。</p>
+<p>下面我们考虑一个简单的例子。有下列三个不等式： <span class="math display">\[B - A \leq c\]</span> <span class="math display">\[C - B \leq a\]</span> <span class="math display">\[C - A \leq b\]</span> 在满足以上约束条件的情况下求<span class="math inline">\(C - A\)</span>的最大值。变换不等式得： <span class="math display">\[A + c \geq B\]</span> <span class="math display">\[B + a \geq C\]</span> <span class="math display">\[A + b \geq C\]</span> 将第一个约束条件和第二个约束条件加起来得到： <span class="math display">\[C - A \leq a + c\]</span> 转化为图论模型如下图： <img data-src="1.png"> 可以发现同时满足<span class="math inline">\(C - A \leq a + c\)</span>与<span class="math inline">\(C - A \leq b\)</span>两个约束条件的<span class="math inline">\(C - A\)</span>的最大值正好对应了图上从<span class="math inline">\(A\)</span>到<span class="math inline">\(C\)</span>的最短路：<span class="math inline">\(min(a + c,b)\)</span>。这就是三角形不等式。将这种情况推广到拥有<span class="math inline">\(n\)</span>个变量和<span class="math inline">\(m\)</span>个不等式的情况，差分约束系统就变成了<span class="math inline">\(n\)</span>个点<span class="math inline">\(m\)</span>条边的最短路问题了。</p>
 <h1 id="差分约束系统的解">差分约束系统的解</h1>
 <p>差分约束系统不一定有解，也不一定有有穷个解。</p>
 <p>差分约束系统无解的情况即<span class="math inline">\(x _ t - x _ s\)</span>不存在最大值，代表不等式间存在无法满足的关系，<span class="math inline">\(x _ t - x _ s \leq val\)</span>中的<span class="math inline">\(val\)</span>可以为无限小。这种情况体现在图论模型中为无法求得最短路，即图中有负权环。</p>
 <p>差分系统有无穷个解的情况即<span class="math inline">\(x _ t - x _ s\)</span>的最大值可以是无穷大，代表<span class="math inline">\(x _ t\)</span>与<span class="math inline">\(x _ s\)</span>之间不存在约束关系。这种情况体现在图论模型中为<span class="math inline">\(s\)</span>与<span class="math inline">\(t\)</span>不连通。</p>
 <p>对于这两种特殊的状况，题目一般会给出输出方式。差分约束系统的解有三种可能：无解，有穷个解，无穷个解。</p>
 <h1 id="差分约束系统的变形">差分约束系统的变形</h1>
-<p>如果仍然给定<span class="math inline">\(n\)</span>个变量和<span class="math inline">\(m\)</span>个不等式，但是要求<span class="math inline">\(x _ t - x _ s(s,t给定)\)</span>的最小值。这时候就不能使用最短路算法来解决问题了。因为最短路算法只能求出<span class="math inline">\(x _ t - x _ s\)</span>的最大值。我们仍然考虑三角形不等式。但是这次给定的不等式为<span class="math inline">\(x _ i - x _ j \geq val(val已知)\)</span>的形式： 由： <span class="math display">\[B - A \geq c\]</span> <span class="math display">\[C - B \geq a\]</span> <span class="math display">\[C - A \geq b\]</span> 转化为： <span class="math display">\[A + c \leq B\]</span> <span class="math display">\[B + a \leq C\]</span> <span class="math display">\[A + b \leq C\]</span> 将<span class="math inline">\(B - A \geq c\)</span>和<span class="math inline">\(C - B \geq a\)</span>加起来得到： <span class="math display">\[C - A \geq a + c\]</span> 转化为图论模型如下图： <img src="1.png"> 可以发现同时满足<span class="math inline">\(C - A \geq a + c\)</span>与<span class="math inline">\(C - A \geq b\)</span>两个约束条件的<span class="math inline">\(C - A\)</span>的最小值正好对应了图上从<span class="math inline">\(A\)</span>到<span class="math inline">\(C\)</span>的最长路：<span class="math inline">\(max(a + c,b)\)</span>。同上，这种情况也可以推广到拥有<span class="math inline">\(n\)</span>个变量和<span class="math inline">\(m\)</span>个不等式的情况，然后使用最长路算法解决。</p>
+<p>如果仍然给定<span class="math inline">\(n\)</span>个变量和<span class="math inline">\(m\)</span>个不等式，但是要求<span class="math inline">\(x _ t - x _ s(s,t给定)\)</span>的最小值。这时候就不能使用最短路算法来解决问题了。因为最短路算法只能求出<span class="math inline">\(x _ t - x _ s\)</span>的最大值。我们仍然考虑三角形不等式。但是这次给定的不等式为<span class="math inline">\(x _ i - x _ j \geq val(val已知)\)</span>的形式： 由： <span class="math display">\[B - A \geq c\]</span> <span class="math display">\[C - B \geq a\]</span> <span class="math display">\[C - A \geq b\]</span> 转化为： <span class="math display">\[A + c \leq B\]</span> <span class="math display">\[B + a \leq C\]</span> <span class="math display">\[A + b \leq C\]</span> 将<span class="math inline">\(B - A \geq c\)</span>和<span class="math inline">\(C - B \geq a\)</span>加起来得到： <span class="math display">\[C - A \geq a + c\]</span> 转化为图论模型如下图： <img data-src="1.png"> 可以发现同时满足<span class="math inline">\(C - A \geq a + c\)</span>与<span class="math inline">\(C - A \geq b\)</span>两个约束条件的<span class="math inline">\(C - A\)</span>的最小值正好对应了图上从<span class="math inline">\(A\)</span>到<span class="math inline">\(C\)</span>的最长路：<span class="math inline">\(max(a + c,b)\)</span>。同上，这种情况也可以推广到拥有<span class="math inline">\(n\)</span>个变量和<span class="math inline">\(m\)</span>个不等式的情况，然后使用最长路算法解决。</p>
 <h1 id="不等式标准化">不等式标准化</h1>
 <p>通过以上的变形，我们发现差分约束系统所给定的约束并不一定只有<span class="math inline">\(x _ i - x _ j \leq val\)</span>这一种形式。因为我们可以将不等式变形，所以给定的不等式的形式是无关紧要的。唯一需要关注的是题目的需求。如果题目要求将<span class="math inline">\(x _ t - x _ s\)</span>最小化，那么使用最长路算法，要求<span class="math inline">\(x _ t - x _ s\)</span>最大化则使用最短路算法。</p>
 <p>还有，很多时候题目所给定的不等式带有大于号或小于号。在这种情况下，如果变量的取值范围在整数域，我们应该将其转化为大于等于或小于等于的形式。例如：<span class="math display">\[A - B &lt; c \Leftrightarrow A - B \leq c - 1\]</span></p>
@@ -418,11 +415,11 @@
             
               <a href="/Blog/tags/图论/" rel="tag"><i class="fa fa-tag"></i> 图论</a>
             
+              <a href="/Blog/tags/最短路/" rel="tag"><i class="fa fa-tag"></i> 最短路</a>
+            
               <a href="/Blog/tags/差分约束/" rel="tag"><i class="fa fa-tag"></i> 差分约束</a>
             
               <a href="/Blog/tags/最长路/" rel="tag"><i class="fa fa-tag"></i> 最长路</a>
-            
-              <a href="/Blog/tags/最短路/" rel="tag"><i class="fa fa-tag"></i> 最短路</a>
             
           </div>
         
